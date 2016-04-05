@@ -85,7 +85,7 @@ function jsonParser(){
   annotatedString = arr.join('');
   //repopulate text-box
   $(".text-box").html(annotatedString);
-  // $(".text-box").html(chapterText);
+  // $(".top-text-box").html(chapterText);
   }
 
 
@@ -100,6 +100,14 @@ function jsonParser(){
   $('.ORGANIZATION').click(function(){
     catValue = "ORGANIZATION";
   })
+
+  $('.DELETE').click(function(){
+    catValue = "DELETE";
+  })
+
+  $( "#save" ).click(function() {
+    this.href = 'data:plain/text,' + JSON.stringify(jsonObj)
+  });
 
   $(".text-box").mousedown(function(){
     $(".text-box").html(chapterText);
@@ -131,6 +139,19 @@ function jsonParser(){
       }
     };
 
+    if (catValue === "DELETE"){
+
+      for (i = 0; i < jsonObj.document.span.length; i++ ){
+        let stringBegin = begin.toString();
+        let stringEnd = end - 1;
+        stringEnd = stringEnd.toString();
+        console.log(stringBegin, stringEnd );
+        if (stringBegin === jsonObj.document.span[i].extent.charseq._START && stringEnd === jsonObj.document.span[i].extent.charseq._END){
+            jsonObj.document.span.splice(i, 1);
+        }//ends matching if statement
+      }//ends for loop
+    } else {
+
     // sort annotation
       let sorted = false;
     for (i = 0; i < jsonObj.document.span.length; i++ ){
@@ -154,19 +175,25 @@ function jsonParser(){
       }
     }// ends for loop
 
-
     jsonObj.document.span = newArr; // re-attach array to big object
     newArr = []; //empty array for next use
 
+  }//ends else statement
+
 
     //re-render page
+    console.log("rerender called" );
     jsonParser();
 
   }); //ends mouseup action
 
   //Delete
     //find selection in localObj
-    // set _START and _END values to false || use 'delete' syntax
+    //grab begin and end
+    //compare begin and end to fields in object
+    //if perfect match, then delete that array
+    //if not perfect match, alert the user
+
 
 
 

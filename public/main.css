@@ -21,7 +21,15 @@ padding-top: 15px;
 }
 
 .top-text-box{
-  /*position: block;*/
+ position: fixed;
+  padding: 10px 10px 10px 10px;
+  margin: 3em 3em 2em 2em;
+  text-align: justify;
+  font-family: Helvetica, Arial, Tahoma;
+  line-height: 155%;
+  border-width: 1.5px;
+  border-style: solid;
+  border-radius: 4px;
   z-index: 1001;
 }
 
