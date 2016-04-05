@@ -1,9 +1,12 @@
-define(["x2js"], function(X2JS) {
+define(["x2js", "jquery"], function(X2JS, $) {
 
 let jsonObj = {};
 //invoke ticker here.
 let ticker = 0;
 let chapterText;
+let newNote;
+let newArr = [];
+
 
 function cbPopulateDom () {
   chapterText = this.responseText;
@@ -27,18 +30,17 @@ function xmlRequest(filename){
 xmlRequest('ch08.txt')
 
 function xmlParser(){
+    let x2js = new X2JS();
+    jsonObj = x2js.xml_str2json( this.responseText );
+  jsonParser(jsonObj);
+}
 
-  let x2js = new X2JS();
-  jsonObj = x2js.xml_str2json( this.responseText );
-  console.log("jsonObj", jsonObj.document.span[1]);
-  //parse jsonObj
+function jsonParser(){
+  console.log("jsonObj", jsonObj );
   let notes = jsonObj.document.span;
-  // console.log(notes.span[1].extent.charseq._START);
-
 
   //convert text to array
   let textArr = chapterText.split('');
-  console.log("textArr", textArr );
 
   //loop over for each item in annotation array
   for (i = 0; i<notes.length; i++){
@@ -62,45 +64,101 @@ function xmlParser(){
     //update ticker
     ticker = (ticker + 1);  // This is the length of the injected CSS tag
     //splice array at (_END + ticker) to insert closing tags
-    let endPoint = Number.parseInt(notes[i].extent.charseq._END) + ticker+1;
+    let endPoint = Number.parseInt(notes[i].extent.charseq._END) + ticker + 1;
 
     textArr.splice(endPoint, 0, "</span>");
 
     //update ticker
     ticker = (ticker + 1);  // This is the length of the injected CSS tag
-  }
-  //stringify array
-  annotatedString = textArr.join('');
 
+  }//ends for loop
+  //reset ticker
+  ticker = 0;
+  arrayToDom(textArr);
+}
+
+  function arrayToDom (arr){
+  //stringify array
+  annotatedString = arr.join('');
   //repopulate text-box
   $(".text-box").html(annotatedString);
+  // $(".text-box").html(chapterText);
+  }
 
 
+//Load Event Handlers
+  //On mousedown, some trickery
+  $(".text-box").mousedown(function(){
+    $(".text-box").html(chapterText);
+  });
 
-//Text selection
   //on mouse up
   $(".text-box").mouseup(function(){
     //grab selection object
     userSelection = document.getSelection();
-  var rangeObject = getRangeObject(userSelection);
+    console.log("userSelection", userSelection );
+    //Create annotation
+    let begin = userSelection.anchorOffset;
+    let end = userSelection.focusOffset;
 
-function getRangeObject(selectionObject) {
-  if (selectionObject.getRangeAt)
-    return selectionObject.getRangeAt(0);
-  else { // Safari!
-    var range = document.createRange();
-    range.setStart(selectionObject.anchorNode,selectionObject.anchorOffset);
-    range.setEnd(selectionObject.focusNode,selectionObject.focusOffset);
-    return range;
-  }
-}
+    //assure that _START is always < _END
+    if (begin > end){
+      let temp = end;
+      end = begin;
+      begin = temp;
+    }
 
-    //log selected text
-    console.log('rangeObject', rangeObject)
-  })
+    newNote = {
+      "_category" : "PERSON",
+      "extent" : {
+        "charseq" : {
+          "_START" : begin.toString(),
+          "_END" : end.toString()
+        }
+      }
+    };
+
+
+    // sort annotation
+      let sorted = false;
+    for (i = 0; i < jsonObj.document.span.length; i++ ){
+      let leftEvalPoint = jsonObj.document.span[i].extent.charseq._START;
+
+      if (begin < leftEvalPoint && sorted === false){
+        newArr[i] = newNote;
+        sorted = true;
+        newArr[(i + 1)] = jsonObj.document.span[i]
+        console.log("1");
+      }//ends 1st if
+
+      if (begin > leftEvalPoint && sorted === false){
+        newArr[i] = jsonObj.document.span[i];
+        console.log("2" );
+      }//ends 2nd if
+
+      if (sorted === true){
+        newArr[(i + 1)] = jsonObj.document.span[i];
+        console.log("3" );
+      }
+    }// ends for loop
+
+
+    jsonObj.document.span = newArr;
+    newArr = [];
+
+
+    jsonParser();
+
+  }); //ends mouseup action
+
+
+
+
+    ///
 
   //Add
     //create object injection
+
     //re-render page
 
   //Delete
@@ -108,7 +166,8 @@ function getRangeObject(selectionObject) {
     // set _START and _END values to false || use 'delete' syntax
 
 
-}
+
+
 
 function gimmeData(filename){
   let myRequest = new XMLHttpRequest();
@@ -120,4 +179,5 @@ function gimmeData(filename){
 }
 
 gimmeData('ch08.txt.xml');
+
 });

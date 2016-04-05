@@ -9,3 +9,14 @@ background-color: #66CDAA;
 .organization{
 background-color: #FF8C00;
 }
+
+
+
+.top-text-box{
+  /*position: block;*/
+  z-index: 1001;
+}
+
+.text-box{
+  position: block;
+}
