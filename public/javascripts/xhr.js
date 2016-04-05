@@ -6,6 +6,9 @@ let ticker = 0;
 let chapterText;
 let newNote;
 let newArr = [];
+let catValue
+
+
 
 
 function cbPopulateDom () {
@@ -50,13 +53,13 @@ function jsonParser(){
 
     let injectionString;
     if (notes[i]._category === 'PERSON'){
-      injectionString = "<span class='person'>";
+      injectionString = "<span class='PERSON'>";
     }
     if (notes[i]._category === 'LOCATION') {
-      injectionString = "<span class='location'>";
+      injectionString = "<span class='LOCATION'>";
     }
     if (notes[i]._category === 'ORGANIZATION') {
-      injectionString = "<span class='organization'>";
+      injectionString = "<span class='ORGANIZATION'>";
     }
 
     //injects the injection string into the array of text characters
@@ -88,6 +91,16 @@ function jsonParser(){
 
 //Load Event Handlers
   //On mousedown, some trickery
+  $('.PERSON').click(function(){
+    catValue = "PERSON";
+  })
+  $('.LOCATION').click(function(){
+    catValue = "LOCATION";
+  })
+  $('.ORGANIZATION').click(function(){
+    catValue = "ORGANIZATION";
+  })
+
   $(".text-box").mousedown(function(){
     $(".text-box").html(chapterText);
   });
@@ -97,7 +110,7 @@ function jsonParser(){
     //grab selection object
     userSelection = document.getSelection();
     console.log("userSelection", userSelection );
-    //Create annotation
+    //create object injection
     let begin = userSelection.anchorOffset;
     let end = userSelection.focusOffset;
 
@@ -109,7 +122,7 @@ function jsonParser(){
     }
 
     newNote = {
-      "_category" : "PERSON",
+      "_category" : catValue,
       "extent" : {
         "charseq" : {
           "_START" : begin.toString(),
@@ -117,7 +130,6 @@ function jsonParser(){
         }
       }
     };
-
 
     // sort annotation
       let sorted = false;
@@ -143,23 +155,14 @@ function jsonParser(){
     }// ends for loop
 
 
-    jsonObj.document.span = newArr;
-    newArr = [];
+    jsonObj.document.span = newArr; // re-attach array to big object
+    newArr = []; //empty array for next use
 
 
+    //re-render page
     jsonParser();
 
   }); //ends mouseup action
-
-
-
-
-    ///
-
-  //Add
-    //create object injection
-
-    //re-render page
 
   //Delete
     //find selection in localObj
