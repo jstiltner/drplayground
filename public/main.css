@@ -2,12 +2,21 @@
   background-color: pink;
 }
 
+button{
+  padding: 10px 10px 10px 10px;
+  font-size: 14px;
+}
+
 .LOCATION{
-background-color: #66CDAA;
+  background-color: #66CDAA;
 }
 
 .ORGANIZATION{
-background-color: #FF8C00;
+  background-color: #FF8C00;
+}
+
+.DELETE{
+  background-color: red;
 }
 
 .button-container{
@@ -17,21 +26,9 @@ width: 100%;
 color: #ffffff;
 height: 35px;
 text-align: center;
-padding-top: 15px;
+padding-top: 5px;
 }
 
-.top-text-box{
- position: fixed;
-  padding: 10px 10px 10px 10px;
-  margin: 3em 3em 2em 2em;
-  text-align: justify;
-  font-family: Helvetica, Arial, Tahoma;
-  line-height: 155%;
-  border-width: 1.5px;
-  border-style: solid;
-  border-radius: 4px;
-  z-index: 1001;
-}
 
 .text-box{
   position: block;

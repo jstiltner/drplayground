@@ -18,6 +18,7 @@
   "dependencies": {
     "jquery": "^2.2.2",
     "requirejs": "^2.2.0",
-    "x2js": "x2js#^1.2.0"
+    "x2js": "x2js#^1.2.0",
+    "bootstrap": "^3.3.6"
   }
 }
